@@ -115,8 +115,8 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware
     public function createConsumer(PsrDestination $destination)
     {
         $destination instanceof PsrTopic
-            ? InvalidDestinationException::assertDestinationInstanceOf($destination, InteropAmqpTopic::class)
-            : InvalidDestinationException::assertDestinationInstanceOf($destination, InteropAmqpQueue::class)
+            ? InvalidDestinationException::assertDestinationInstanceOf($destination, 'Interop\Amqp\AmqpTopic')
+            : InvalidDestinationException::assertDestinationInstanceOf($destination, 'Interop\Amqp\AmqpQueue')
         ;
 
         if ($destination instanceof AmqpTopic) {
@@ -404,17 +404,20 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware
                 if ($timeout <= 0) {
                     break;
                 }
+
+                $signalHandler->afterSocket();
             }
         } catch (AMQPTimeoutException $e) {
+            $signalHandler->afterSocket();
         } catch (StopBasicConsumptionException $e) {
+            $signalHandler->afterSocket();
         } catch (AMQPIOWaitException $e) {
             if ($signalHandler->wasThereSignal()) {
+                $signalHandler->afterSocket();
                 return;
             }
 
             throw $e;
-        } finally {
-            $signalHandler->afterSocket();
         }
     }
 

@@ -68,11 +68,11 @@ class AmqpProducer implements InteropAmqpProducer, DelayStrategyAware
     public function send(PsrDestination $destination, PsrMessage $message)
     {
         $destination instanceof PsrTopic
-            ? InvalidDestinationException::assertDestinationInstanceOf($destination, InteropAmqpTopic::class)
-            : InvalidDestinationException::assertDestinationInstanceOf($destination, InteropAmqpQueue::class)
+            ? InvalidDestinationException::assertDestinationInstanceOf($destination, 'Interop\Amqp\AmqpTopic')
+            : InvalidDestinationException::assertDestinationInstanceOf($destination, 'Interop\Amqp\AmqpQueue')
         ;
 
-        InvalidMessageException::assertMessageInstanceOf($message, InteropAmqpMessage::class);
+        InvalidMessageException::assertMessageInstanceOf($message, 'Interop\Amqp\AmqpMessage');
 
         try {
             $this->doSend($destination, $message);
